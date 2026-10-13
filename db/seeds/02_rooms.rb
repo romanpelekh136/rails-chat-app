@@ -1,14 +1,22 @@
 puts "Seeding Rooms..."
 
-users = User.all.to_a
-if users.empty?
-  raise "No users found; run db/seeds/01_users.rb before seeding rooms"
+max  = User.find_by!(email: "admin@example.com")
+alex = User.find_by!(email: "alex@example.com")
+maya = User.find_by!(email: "maya@example.com")
+leo  = User.find_by!(email: "leo@example.com")
+
+rooms_data = [
+  { name: "Film & Cameras",    creator: maya },
+  { name: "Music & Gigs",      creator: max },
+  { name: "Late Night Gaming", creator: leo },
+  { name: "Board Games Night", creator: alex },
+  { name: "General Hangout",   creator: max }
+]
+
+rooms_data.each do |room_attrs|
+  Room.find_or_create_by!(name: room_attrs[:name]) do |r|
+    r.user = room_attrs[:creator]
+  end
 end
 
-5.times do
-  Room.create!(
-    name: Faker::Hobby.activity,
-    user: users.sample
-  )
-end
-puts "Created 8 Rooms."
+puts "Seeded #{Room.count} Rooms."
