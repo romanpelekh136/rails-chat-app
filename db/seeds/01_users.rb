@@ -1,15 +1,26 @@
 puts "Seeding Users..."
 
-User.find_or_create_by!(email: "admin@example.com") do |u|
-  u.username = "Admin"
+# Log in with admin@example.com / password123 to take screenshots
+admin = User.find_or_create_by!(email: "admin@example.com") do |u|
+  u.username = "max"
   u.password = "password123"
+  u.role = :admin
+end
+admin.update!(username: "max", role: :admin)
+
+friends = [
+  { username: "alex",  email: "alex@example.com" },
+  { username: "maya",  email: "maya@example.com" },
+  { username: "leo",   email: "leo@example.com" },
+  { username: "kate",  email: "kate@example.com" }
+]
+
+friends.each do |attrs|
+  User.find_or_create_by!(email: attrs[:email]) do |u|
+    u.username = attrs[:username]
+    u.password = "password123"
+    u.role = :user
+  end
 end
 
-10.times do
-  User.create!(
-    username: Faker::Internet.username,
-    email: Faker::Internet.unique.email,
-    password: "password123"
-  )
-end
-puts "Created 11 Users."
+puts "Seeded #{User.count} Users."
